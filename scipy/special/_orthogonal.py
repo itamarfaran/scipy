@@ -157,7 +157,7 @@ class orthopoly1d(np.poly1d):
         self.normcoef *= p
 
 
-def _gen_roots_and_weights(n, mu0, an_func, bn_func, f, df, symmetrize, mu):
+def _gen_roots_and_weights(n, mu0, an_func, bn_func, f, df, symmetrize, mu, log_w=False):
     """[x,w] = gen_roots_and_weights(n,an_func,sqrt_bn_func,mu)
 
     Returns the roots (x) of an nth order orthogonal polynomial,
@@ -196,7 +196,10 @@ def _gen_roots_and_weights(n, mu0, an_func, bn_func, f, df, symmetrize, mu):
         w = (w + w[::-1]) / 2
         x = (x - x[::-1]) / 2
 
-    w *= mu0 / w.sum()
+    if log_w:
+        w = np.log(w) + mu0 - np.log(w.sum())
+    else:
+        w = w * mu0 / w.sum()
 
     if mu:
         return x, w, mu0
